@@ -2,16 +2,19 @@ SHELL=/bin/bash
 
 FREESPACE=$(shell df /home -B 1M | awk '{if ($$1 != "Filesystem") print $$4}')
 
-CURRENTSTEP=$(shell cat .current_step)
+CURRENTSTEP=$(shell cat .current_step 2> /dev/null || echo 0)
 CURRENTSETPNAME=$(shell cat steps.yaml | shyaml get-value steps.$(CURRENTSTEP).name ~~EOF~~)
+NEXTSETPNAME=$(shell cat steps.yaml | shyaml get-value steps.$$(( $(CURRENTSTEP) + 1 )).name ~~EOF~~)
 
 ASCIINEMA := $(shell command -v asciinema 2> /dev/null)
 SHYAML := $(shell command -v shyaml 2> /dev/null)
+DIALOG := $(shell command -v dialog 2> /dev/null)
 
-start: install help asciinema
+start: install printsession help asciinema
 
 install:
-	if [ $(FREESPACE) -lt 15 ] ; then (echo "ERROR! Not enough free disk space!"; echo ""; exit 1); fi
+	@echo "0" > .current_step
+	@if [ $(FREESPACE) -lt 15 ] ; then (echo "ERROR! Not enough free disk space!"; echo ""; exit 1); fi
 ifndef ASCIINEMA
 	$(info    Installing Dependencies)
 	@sudo pip3 install asciinema > /dev/null 2>&1
@@ -20,16 +23,21 @@ ifndef SHYAML
 	$(info    Installing Dependencies)
 	@sudo pip3 install shyaml > /dev/null 2>&1
 endif
+ifndef DIALOG
+	$(info    Installing Dependencies)
+	@sudo apt-get install -y dialog > /dev/null 2>&1
+endif
+
+printsession:
 	$(info    )
 	$(info    )
 	$(info    Starting Empathy Session:)
 	@echo "$(shell cat steps.yaml | shyaml get-value name)"
-	@echo "0" > .current_step
 
 asciinema:
 	$(info    Loading...)
 	@cat ~/.bashrc .rcfile > .temprc
-	@asciinema rec session.cast --overwrite -q -c "/bin/bash --rcfile .temprc"
+	@asciinema rec .session.cast --overwrite -q -c "/bin/bash --rcfile .temprc"
 
 help:
 	$(info    )
@@ -59,10 +67,10 @@ stop:
 	@pkill asciinema
 
 submit:
-	@echo ""
+	@bash .submit.sh
 
 next:
-ifeq '$(CURRENTSETPNAME)' '~~EOF~~'
+ifeq '$(NEXTSETPNAME)' '~~EOF~~'
 	$(info    All Steps Finished!)
 	@make stop
 else

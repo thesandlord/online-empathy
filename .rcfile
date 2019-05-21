@@ -1,4 +1,6 @@
-alias stop="make stop"
 alias check="make check"
+alias next="make check"
 alias help="make help"
+alias stop="make stop"
 alias exit="make stop"
+alias done="make stop"
