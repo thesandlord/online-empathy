@@ -5,8 +5,7 @@
 
 Instructions:
 
-run “make start” to get started
-
+run “make -s start” to get started
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

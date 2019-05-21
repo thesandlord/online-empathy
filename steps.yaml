@@ -1,0 +1,6 @@
+name: <unique-challenge-name>
+steps:
+  - name: <step-1-name>
+    assignment: Text to print for the first assignment
+  - name: <step-2-name>
+    assignment: Text to print for the second assignment

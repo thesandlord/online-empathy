@@ -1,0 +1,4 @@
+alias stop="make stop"
+alias check="make check"
+alias help="make help"
+alias exit="make stop"
