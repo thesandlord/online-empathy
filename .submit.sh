@@ -26,8 +26,13 @@ GAPS=$(dialog --checklist "What immediate gaps did you discover in the product?"
 ADDITIONAL=$(dialog --inputbox "Additional Feedback:" 0 100 2>&1 1>&3);
 
 exec 3>&-;
-#echo $ROLE $RATE $UNDERSTAND $GAPS $ADDITIONAL;
-curl -s -d '{"email":"'"$EMAIL"'", "role":"'"$ROLE"'", "rate":"'"$RATE"'", "understand":"'"$UNDERSTAND"'", "gaps":"'"$GAPS"'", "additional":"'"$ADDITIONAL"'"}' -H "Content-Type: application/json" -X POST \
-    http://localhost:8080 > /dev/null
+
+CAST=$(sed -n '/Do you want to submit this empathy session?/q;p' .session.cast | gzip | base64 -w0)
+
+NAME=$(cat steps.yaml | shyaml get-value name)
+
+#echo '{"email":"'"$EMAIL"'", "role":"'"$ROLE"'", "rate":"'"$RATE"'", "understand":"'"$UNDERSTAND"'", "gaps":"'"$GAPS"'", "additional":"'"$ADDITIONAL"'", "cast":"'"$CAST"'"}';
+curl -s -d '{"challenge_name":"'"$NAME"'", "email":"'"$EMAIL"'", "role":"'"$ROLE"'", "rate":"'"$RATE"'", "understand":"'"$UNDERSTAND"'", "gaps":"'"$GAPS"'", "additional":"'"$ADDITIONAL"'", "cast":"'"$CAST"'"}' -H "Content-Type: application/json" -X POST \
+    https://submit-3shqsftkcq-uc.a.run.app > /dev/null
 clear
 echo "Session Saved! Thank you!"

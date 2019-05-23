@@ -58,16 +58,13 @@ check:
 
 stop:
 	@while [ -z "$$SUBMIT" ]; do \
-        read -r -p "Do you want to submit this empathy session? [Y/n]: " SUBMIT; \
+        read -r -p "Do you want to submit this empathy session? [y/n]: " SUBMIT; \
     done ; \
 	[ $$SUBMIT = "y" ] || [ $$SUBMIT = "Y" ] || [ $$SUBMIT = "Yes" ] || [ $$SUBMIT = "YES" ] || (echo "Exiting. If you change your mind, type 'make submit'. Type 'make -s start' to restart the session"; pkill asciinema;)
-	@make submit
+	@bash .submit.sh
 	@rm -f .current_step
 	@rm -f .temprc
 	@pkill asciinema
-
-submit:
-	@bash .submit.sh
 
 next:
 ifeq '$(NEXTSETPNAME)' '~~EOF~~'
