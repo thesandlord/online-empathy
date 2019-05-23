@@ -10,21 +10,21 @@ ASCIINEMA := $(shell command -v asciinema 2> /dev/null)
 SHYAML := $(shell command -v shyaml 2> /dev/null)
 DIALOG := $(shell command -v dialog 2> /dev/null)
 
-start: install printsession help asciinema
+start: install printsession asciinema
 
 install:
 	@echo "0" > .current_step
 	@if [ $(FREESPACE) -lt 15 ] ; then (echo "ERROR! Not enough free disk space!"; echo ""; exit 1); fi
 ifndef ASCIINEMA
-	$(info    Installing Dependencies)
+	@echo "Installing Dependency 'asciinema'"
 	@sudo pip3 install asciinema > /dev/null 2>&1
 endif
 ifndef SHYAML
-	$(info    Installing Dependencies)
+	@echo "Installing Dependency 'shyaml'"
 	@sudo pip3 install shyaml > /dev/null 2>&1
 endif
 ifndef DIALOG
-	$(info    Installing Dependencies)
+	@echo "Installing Dependency 'dialog'"
 	@sudo apt-get install -y dialog > /dev/null 2>&1
 endif
 
@@ -43,17 +43,18 @@ help:
 	$(info    )
 	$(info    )
 	$(info    Type "stop" to stop at any time)
-	$(info    Type "check" to validate your work and move to the next step)
+	$(info    Type "check" to validate and move to the next step)
 	$(info    Type "help" to print this message again)
 	$(info    )
 	$(info    )
+	@echo "Your Assignment:"
 	@cat steps.yaml | shyaml get-value steps.$(CURRENTSTEP).assignment
 	@echo ''
 	@echo ''
 	@echo ''
 
 check:
-	@echo "$(CURRENTSETPNAME)"
+	#@echo "$(CURRENTSETPNAME)"
 	@make next
 
 stop:
@@ -61,15 +62,23 @@ stop:
         read -r -p "Do you want to submit this empathy session? [y/n]: " SUBMIT; \
     done ; \
 	[ $$SUBMIT = "y" ] || [ $$SUBMIT = "Y" ] || [ $$SUBMIT = "Yes" ] || [ $$SUBMIT = "YES" ] || (echo "Exiting. If you change your mind, type 'make submit'. Type 'make -s start' to restart the session"; pkill asciinema;)
-	@bash .submit.sh
+	@make submit
 	@rm -f .current_step
 	@rm -f .temprc
 	@pkill asciinema
 
 next:
 ifeq '$(NEXTSETPNAME)' '~~EOF~~'
+	$(info    )
+	$(info    )
 	$(info    All Steps Finished!)
+	$(info    )
+	$(info    )
 	@make stop
 else
 	@echo $$(( $(CURRENTSTEP) + 1 )) > .current_step
+	@make help
 endif
+
+submit:
+	@bash .submit.sh

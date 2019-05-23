@@ -1,0 +1,9 @@
+name: gke-cluster-creation-and-scale
+id: 1tFOGpONCFkpsBi4mQlq2rvcrI3hp631k0f56oV3yGB0
+steps:
+  - name: create-cluster
+    assignment: The first step is to create a GKE Cluster. Create a 2-node GKE cluster. You can use any zone and machine type.
+  - name: scale-cluster
+    assignment: Now let's scale up the cluster. Add two new nodes to the cluster you just created.
+  - name: delete-cluster
+    assignment: Finally, delete the cluster you just scaled up.

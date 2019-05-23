@@ -1,4 +1,5 @@
 name: <unique-challenge-name>
+id: <your-google-sheet-id>
 steps:
   - name: <step-1-name>
     assignment: Text to print for the first assignment

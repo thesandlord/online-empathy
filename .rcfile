@@ -4,3 +4,5 @@ alias help="make help"
 alias stop="make stop"
 alias exit="make stop"
 alias done="make stop"
+make help
+PS1="$ "

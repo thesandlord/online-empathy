@@ -31,8 +31,10 @@ CAST=$(sed -n '/Do you want to submit this empathy session?/q;p' .session.cast |
 
 NAME=$(cat steps.yaml | shyaml get-value name)
 
+ID=$(cat steps.yaml | shyaml get-value id)
+
 #echo '{"email":"'"$EMAIL"'", "role":"'"$ROLE"'", "rate":"'"$RATE"'", "understand":"'"$UNDERSTAND"'", "gaps":"'"$GAPS"'", "additional":"'"$ADDITIONAL"'", "cast":"'"$CAST"'"}';
-curl -s -d '{"challenge_name":"'"$NAME"'", "email":"'"$EMAIL"'", "role":"'"$ROLE"'", "rate":"'"$RATE"'", "understand":"'"$UNDERSTAND"'", "gaps":"'"$GAPS"'", "additional":"'"$ADDITIONAL"'", "cast":"'"$CAST"'"}' -H "Content-Type: application/json" -X POST \
-    https://submit-3shqsftkcq-uc.a.run.app > /dev/null
+curl -s -d '{"challenge_name":"'"$NAME"'", "challenge_id":"'"$ID"'", "email":"'"$EMAIL"'", "role":"'"$ROLE"'", "rate":"'"$RATE"'", "understand":"'"$UNDERSTAND"'", "gaps":"'"$GAPS"'", "additional":"'"$ADDITIONAL"'", "cast":"'"$CAST"'"}' -H "Content-Type: application/json" -X POST \
+    http://submit-3shqsftkcq-uc.a.run.app > /dev/null
 clear
 echo "Session Saved! Thank you!"
