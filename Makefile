@@ -35,7 +35,7 @@ printsession:
 	@echo "$(shell cat steps.yaml | shyaml get-value name)"
 
 asciinema:
-	$(info    Loading...)
+	$(info    Terminal Screen Recorder is Loading...)
 	@cat ~/.bashrc .rcfile > .temprc
 	@asciinema rec .session.cast --overwrite -q -c "/bin/bash --rcfile .temprc"
 
@@ -43,7 +43,7 @@ help:
 	$(info    )
 	$(info    )
 	$(info    Type "stop" to stop at any time)
-	$(info    Type "check" to validate and move to the next step)
+	$(info    Type "next" to move to the next step)
 	$(info    Type "help" to print this message again)
 	$(info    )
 	$(info    )
