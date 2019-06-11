@@ -47,6 +47,8 @@ help:
 	$(info    Type "help" to print this message again)
 	$(info    )
 	$(info    )
+	@echo "Challenge: $(CURRENTSETPNAME)"
+	@echo ""
 	@echo "Your Assignment:"
 	@cat steps.yaml | shyaml get-value steps.$(CURRENTSTEP).assignment
 	@echo ''
