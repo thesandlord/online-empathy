@@ -1,10 +1,11 @@
 SHELL=/bin/bash
 
+BASEDIR=$(shell cat /tmp/.empathybasedir 2>/dev/null || pwd)
 FREESPACE=$(shell df /home -B 1M | awk '{if ($$1 != "Filesystem") print $$4}')
 
-CURRENTSTEP=$(shell cat .current_step 2> /dev/null || echo 0)
-CURRENTSETPNAME=$(shell cat steps.yaml | shyaml get-value steps.$(CURRENTSTEP).name ~~EOF~~)
-NEXTSETPNAME=$(shell cat steps.yaml | shyaml get-value steps.$$(( $(CURRENTSTEP) + 1 )).name ~~EOF~~)
+CURRENTSTEP=$(shell cat $(BASEDIR)/.current_step 2> /dev/null || echo 0)
+CURRENTSETPNAME=$(shell cat $(BASEDIR)/steps.yaml | shyaml get-value steps.$(CURRENTSTEP).name ~~EOF~~)
+NEXTSETPNAME=$(shell cat $(BASEDIR)/steps.yaml | shyaml get-value steps.$$(( $(CURRENTSTEP) + 1 )).name ~~EOF~~)
 
 ASCIINEMA := $(shell command -v asciinema 2> /dev/null)
 SHYAML := $(shell command -v shyaml 2> /dev/null)
@@ -32,11 +33,13 @@ printsession:
 	$(info    )
 	$(info    )
 	$(info    Starting Empathy Session:)
-	@echo "$(shell cat steps.yaml | shyaml get-value name)"
+	@echo "$(shell cat $(BASEDIR)/steps.yaml | shyaml get-value name)"
 
 asciinema:
 	$(info    Terminal Screen Recorder is Loading...)
-	@cat ~/.bashrc .rcfile > .temprc
+	@echo $(shell pwd) > /tmp/.empathybasedir
+	@cat ~/.bashrc $(BASEDIR)/.rcfile > $(BASEDIR)/.temprc
+	@sed -i 's~{MAKEPATH}~$(BASEDIR)/Makefile~g' $(BASEDIR)/.temprc
 	@asciinema rec .session.cast --overwrite -q -c "/bin/bash --rcfile .temprc"
 
 help:
@@ -50,14 +53,13 @@ help:
 	@echo "Challenge: $(CURRENTSETPNAME)"
 	@echo ""
 	@echo "Your Assignment:"
-	@cat steps.yaml | shyaml get-value steps.$(CURRENTSTEP).assignment
+	@cat $(BASEDIR)/steps.yaml | shyaml get-value steps.$(CURRENTSTEP).assignment
 	@echo ''
 	@echo ''
 	@echo ''
 
 check:
-	#@echo "$(CURRENTSETPNAME)"
-	@make next
+	@make -f $(BASEDIR)/Makefile next
 
 stop:
 	@while [ -z "$$SUBMIT" ]; do \
@@ -65,8 +67,8 @@ stop:
     done ; \
 	[ $$SUBMIT = "y" ] || [ $$SUBMIT = "Y" ] || [ $$SUBMIT = "Yes" ] || [ $$SUBMIT = "YES" ] || (echo "Exiting. If you change your mind, type 'make submit'. Type 'make -s start' to restart the session"; pkill asciinema;)
 	@make submit
-	@rm -f .current_step
-	@rm -f .temprc
+	@rm -f $(BASEDIR)/.current_step
+	@rm -f $(BASEDIR)/.temprc
 	@pkill asciinema
 
 next:
@@ -76,11 +78,11 @@ ifeq '$(NEXTSETPNAME)' '~~EOF~~'
 	$(info    All Steps Finished!)
 	$(info    )
 	$(info    )
-	@make stop
+	@make -f $(BASEDIR)/Makefile stop
 else
-	@echo $$(( $(CURRENTSTEP) + 1 )) > .current_step
-	@make help
+	@echo $$(( $(CURRENTSTEP) + 1 )) > $(BASEDIR)/.current_step
+	@make -f $(BASEDIR)/Makefile help
 endif
 
 submit:
-	@bash .submit.sh
+	@bash $(BASEDIR)/.submit.sh

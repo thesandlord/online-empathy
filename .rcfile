@@ -1,8 +1,8 @@
-alias check="make check"
-alias next="make check"
-alias help="make help"
-alias stop="make stop"
-alias exit="make stop"
-alias done="make stop"
-make help
+alias check="make -f {MAKEPATH} check"
+alias next="make -f {MAKEPATH} check"
+alias help="make -f {MAKEPATH} help"
+alias stop="make -f {MAKEPATH} stop"
+alias exit="make -f {MAKEPATH} stop"
+alias done="make -f {MAKEPATH} stop"
+make -f {MAKEPATH} help
 PS1="$ "
