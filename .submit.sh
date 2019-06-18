@@ -2,7 +2,14 @@ EMAIL=$(gcloud config get-value core/account 2> /dev/null)
 
 exec 3>&1;
 
-ROLE=$(dialog --inputbox "What is your role on the team?" 0 0 2>&1 1>&3);
+Role=$(dialog --menu "What is your role on the team?" 0 0 6 \
+    Manager "" \
+    Engineering "" \
+    Product "" \
+    DevRel "" \
+    UX "" \
+    Other "" \
+    2>&1 1>&3);
 
 RATE=$(dialog --menu "How would you rate the challenge?" 0 0 5 \
     1 "1 Needs Work" \
@@ -23,7 +30,7 @@ GAPS=$(dialog --checklist "What immediate gaps did you discover in the product?"
     5 "Unknown Bugs" off \
     2>&1 1>&3);
 
-ADDITIONAL=$(dialog --inputbox "Additional Feedback:" 0 100 2>&1 1>&3);
+ADDITIONAL=$(dialog --inputbox "What are the Top 3 Issues that should be resolved?" 0 100 2>&1 1>&3);
 
 exec 3>&-;
 

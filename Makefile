@@ -7,27 +7,13 @@ CURRENTSTEP=$(shell cat $(BASEDIR)/.current_step 2> /dev/null || echo 0)
 CURRENTSETPNAME=$(shell cat $(BASEDIR)/steps.yaml | shyaml get-value steps.$(CURRENTSTEP).name ~~EOF~~)
 NEXTSETPNAME=$(shell cat $(BASEDIR)/steps.yaml | shyaml get-value steps.$$(( $(CURRENTSTEP) + 1 )).name ~~EOF~~)
 
-ASCIINEMA := $(shell command -v asciinema 2> /dev/null)
-SHYAML := $(shell command -v shyaml 2> /dev/null)
-DIALOG := $(shell command -v dialog 2> /dev/null)
-
 start: install printsession asciinema
 
 install:
 	@echo "0" > .current_step
 	@if [ $(FREESPACE) -lt 15 ] ; then (echo "ERROR! Not enough free disk space!"; echo ""; exit 1); fi
-ifndef ASCIINEMA
-	@echo "Installing Dependency 'asciinema'"
-	@sudo pip3 install asciinema > /dev/null 2>&1
-endif
-ifndef SHYAML
-	@echo "Installing Dependency 'shyaml'"
-	@sudo pip3 install shyaml > /dev/null 2>&1
-endif
-ifndef DIALOG
-	@echo "Installing Dependency 'dialog'"
-	@sudo apt-get install -y dialog > /dev/null 2>&1
-endif
+	@echo "Installing Dependencies"
+	@sudo pip3 install asciinema > /dev/null 2>&1 & sudo pip3 install shyaml > /dev/null 2>&1 & sudo apt-get install -y dialog > /dev/null 2>&1 & wait
 
 printsession:
 	$(info    )
