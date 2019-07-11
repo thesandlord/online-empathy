@@ -4,7 +4,7 @@ BASEDIR=$(shell cat /tmp/.empathybasedir 2>/dev/null || pwd)
 FREESPACE=$(shell df /home -B 1M | awk '{if ($$1 != "Filesystem") print $$4}')
 
 CURRENTSTEP=$(shell cat $(BASEDIR)/.current_step 2> /dev/null || echo 0)
-NEXTSETPNAME=$(shell cat $(BASEDIR)/steps.yaml | ./shyaml get-value steps.$$(( $(CURRENTSTEP) + 1 )).name ~~EOF~~)
+NEXTSETPNAME=$(shell cat $(BASEDIR)/steps.yaml | shyaml get-value steps.$$(( $(CURRENTSTEP) + 1 )).name ~~EOF~~)
 
 start: install printsession asciinema
 
@@ -12,13 +12,13 @@ install:
 	@echo "0" > .current_step
 	@if [ $(FREESPACE) -lt 15 ] ; then (echo "ERROR! Not enough free disk space!"; echo ""; exit 1); fi
 	@echo "Installing Dependencies"
-	@sudo pip3 install asciinema > /dev/null 2>&1 & sudo apt-get install -y dialog > /dev/null 2>&1 & wait
+	@sudo pip3 install shyaml > /dev/null 2>&1 & sudo pip3 install asciinema > /dev/null 2>&1 & wait
 
 printsession:
 	$(info    )
 	$(info    )
 	$(info    Starting Empathy Session:)
-	@echo "$(shell cat $(BASEDIR)/steps.yaml | ./shyaml get-value name)"
+	@echo "$(shell cat $(BASEDIR)/steps.yaml | shyaml get-value name)"
 
 asciinema:
 	$(info    Terminal Screen Recorder is Loading...)
@@ -30,10 +30,10 @@ asciinema:
 help:
 	@echo ''
 	@echo ''
-	@echo "Challenge: $(shell cat $(BASEDIR)/steps.yaml | ./shyaml get-value steps.$(CURRENTSTEP).name ~~EOF~~)"
+	@echo "Challenge: $(shell cat $(BASEDIR)/steps.yaml | shyaml get-value steps.$(CURRENTSTEP).name ~~EOF~~)"
 	@echo ""
 	@echo "Your Assignment:"
-	@cat $(BASEDIR)/steps.yaml | ./shyaml get-value steps.$(CURRENTSTEP).assignment
+	@cat $(BASEDIR)/steps.yaml | shyaml get-value steps.$(CURRENTSTEP).assignment
 	@echo ''
 	@echo ''
 	@echo ''

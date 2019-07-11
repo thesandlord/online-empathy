@@ -2,7 +2,7 @@ EMAIL=$(gcloud config get-value core/account 2> /dev/null)
 
 exec 3>&1;
 
-Role=$(dialog --menu "What is your role on the team?" 0 0 6 \
+Role=$(./dialog --menu "What is your role on the team?" 0 0 6 \
     Manager "" \
     Engineering "" \
     Product "" \
@@ -11,7 +11,7 @@ Role=$(dialog --menu "What is your role on the team?" 0 0 6 \
     Other "" \
     2>&1 1>&3);
 
-RATE=$(dialog --menu "How would you rate the challenge?" 0 0 5 \
+RATE=$(./dialog --menu "How would you rate the challenge?" 0 0 5 \
     1 "1 Needs Work" \
     2 "2" \
     3 "3" \
@@ -19,10 +19,10 @@ RATE=$(dialog --menu "How would you rate the challenge?" 0 0 5 \
     5 "5 Fantastic" \
     2>&1 1>&3);
 
-dialog --yesno "Did this challenge help you understand our customers better?" 0 0 2>&1 1>&3;
+./dialog --yesno "Did this challenge help you understand our customers better?" 0 0 2>&1 1>&3;
 UNDERSTAND=$?;
 
-GAPS=$(dialog --checklist "What immediate gaps did you discover in the product?" 0 0 5 \
+GAPS=$(./dialog --checklist "What immediate gaps did you discover in the product?" 0 0 5 \
     1 "Gaps in Documentation" off \
     2 "Features that weren't necessary" off \
     3 "Features that should be prioritized" off \
@@ -30,7 +30,7 @@ GAPS=$(dialog --checklist "What immediate gaps did you discover in the product?"
     5 "Unknown Bugs" off \
     2>&1 1>&3);
 
-ADDITIONAL=$(dialog --inputbox "What are the Top 3 Issues that should be resolved?" 0 100 2>&1 1>&3);
+ADDITIONAL=$(./dialog --inputbox "What are the Top 3 Issues that should be resolved?" 0 100 2>&1 1>&3);
 
 exec 3>&-;
 
